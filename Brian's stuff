@@ -1,0 +1,75 @@
+import pygame
+
+
+pygame.init()
+pygame.font.init()
+
+infoObject = pygame.display.Info()
+
+SIZE = (900, 600)
+
+screen = pygame.display.set_mode(SIZE, pygame.RESIZABLE)
+
+clock = pygame.time.Clock()
+
+# ---------------------------
+# Initialize global variables
+
+circle_x = 0
+
+font_big= pygame.font.SysFont("Comic Sans MS", 70)
+font_small= pygame.font.SysFont("Comic Sans MS", 30)
+current_screen = "menu"
+# ---------------------------
+
+running = True
+while running:
+    WIDTH, HEIGHT = screen.get_size()
+    if current_screen == "menu":
+        # EVENT HANDLING
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        # GAME STATE UPDATES
+        # All game math and comparisons happen here
+
+        # DRAWING
+        screen.fill((0,0,25))  # always the first drawing command
+
+
+        title_text = font_big.render('Placeholder', True, (139, 0, 0))
+        title_width = title_text.get_width()
+        screen.blit(title_text, (WIDTH//2 - title_width//2, HEIGHT//2-HEIGHT*0.3))
+
+        Play_text = font_small.render('Play', True, (139, 0, 0))
+        Play_width = Play_text.get_width()
+        screen.blit(Play_text, (WIDTH//2 - Play_width//2, HEIGHT//2-HEIGHT*0.08))
+
+        character_text = font_small.render('Characters', True, (139, 0, 0))
+        character_width = character_text.get_width()
+        screen.blit(character_text, (WIDTH//2 - character_width//2, HEIGHT//2-HEIGHT*0.015))
+
+    elif current_screen == "instructions":
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    current_screen = "menu"
+
+        # update
+
+        # draw
+        screen.fill("#77e30b")  # always the first drawing command
+
+      
+
+    # Must be the last two lines
+    # of the game loop
+    pygame.display.flip()
+    clock.tick(30)
+    #---------------------------
+
+
+pygame.quit()
