@@ -8,6 +8,7 @@ pygame.font.init()
 WIDTH = 640
 HEIGHT = 480
 SIZE = (WIDTH, HEIGHT)
+frame_rate=60
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
@@ -15,22 +16,55 @@ clock = pygame.time.Clock()
 # ---------------------------
 # Initialize global variables
 
-circle_x = 0
 
 font_big= pygame.font.SysFont("Comic Sans MS", 70)
 font_small= pygame.font.SysFont("Comic Sans MS", 30)
 current_screen = "menu"
+
 # ---------------------------
 
 running = True
 while running:
-    if current_screen == "menu":
+    mouse_pos = pygame.mouse.get_pos()
+    mouse_click = pygame.mouse.get_pressed()
         # EVENT HANDLING
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    if current_screen == "menu":
         # GAME STATE UPDATES
+        Play_text = font_small.render('Play', True, (139, 0, 0))
+        Play_width = Play_text.get_width()
+        Play_height = Play_text.get_height()
+        x_play = WIDTH // 2 - Play_width // 2
+        y_play = HEIGHT // 2 - HEIGHT * 0.08+40
+        Play_rect = pygame.Rect(x_play, y_play, Play_width, Play_height)
+        if Play_rect.collidepoint(mouse_pos):
+            if mouse_click[0]: 
+                current_screen="play"
+
+        character_text = font_small.render('Characters', True, (139, 0, 0))
+        character_width = character_text.get_width()
+        character_height = character_text.get_height()
+        x_char = WIDTH // 2 - character_width // 2
+        y_char = HEIGHT // 2+40
+        character_rect = pygame.Rect(x_char, y_char, character_width, character_height)
+        if character_rect.collidepoint(mouse_pos):
+            if mouse_click[0]: 
+                current_screen="character"
+
+        Options_text = font_small.render('Options', True, (139, 0, 0))
+        Options_width = Options_text.get_width()
+        Options_height = Options_text.get_height()
+        Options_x = WIDTH // 2 - Options_width // 2
+        Options_y = HEIGHT // 2 + HEIGHT * 0.08+40
+        options_rect = pygame.Rect(Options_x, Options_y, Options_width, Options_height)
+        if options_rect.collidepoint(mouse_pos):
+            if mouse_click[0]: 
+                current_screen="options"
+
+
+
         # All game math and comparisons happen here
 
         # DRAWING
@@ -41,33 +75,67 @@ while running:
         title_width = title_text.get_width()
         screen.blit(title_text, (WIDTH//2 - title_width//2, HEIGHT//2-HEIGHT*0.3))
 
-        Play_text = font_small.render('Play', True, (139, 0, 0))
-        Play_width = Play_text.get_width()
-        screen.blit(Play_text, (WIDTH//2 - Play_width//2, HEIGHT//2-HEIGHT*0.08))
+        screen.blit(Play_text, (x_play, y_play))
+        screen.blit(character_text, (x_char, y_char))
+        screen.blit(Options_text, (Options_x, Options_y))
+    elif current_screen=="character":
+        screen.fill((0,0,25))
+        pygame.draw.rect(screen, (0,0,65), (0, HEIGHT - 100, WIDTH, 100))
+    elif current_screen=="options":     
+        ops_text = font_big.render('Options', True, (0, 0, 0))
+        ops_width = ops_text.get_width()
+        ops_height = ops_text.get_height()
+        ops_x = WIDTH // 2 - ops_width // 2 
+        ops_y = HEIGHT // 2 - HEIGHT * 0.45   
 
-        character_text = font_small.render('Characters', True, (139, 0, 0))
-        character_width = character_text.get_width()
-        screen.blit(character_text, (WIDTH//2 - character_width//2, HEIGHT//2-HEIGHT*0.015))
 
-    elif current_screen == "instructions":
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    current_screen = "menu"
+        frame_text = font_small.render('Frame Rate:', True, (0, 0, 0))
+        frame_width = frame_text.get_width()
+        frame_height = frame_text.get_height()
+        frame_x = WIDTH // 2 - frame_width // 2 - WIDTH*0.30
+        frame_y = HEIGHT // 2 - HEIGHT * 0.2
+
+        screen.fill((255,255,255))
+        screen.blit(frame_text, (frame_x, frame_y))
+        screen.blit(ops_text, (ops_x, ops_y))
+
+        min_rate = 30
+        max_rate = 240
+        slider_length = 200
+        slider_height = 6
+
+        slider_x = int(frame_x + frame_width + 20)
+        slider_y = int(frame_y + frame_height // 2 - slider_height // 2)
+
+        knob_radius = 10
+        knob_x = int(slider_x + (frame_rate - min_rate) / (max_rate - min_rate) * slider_length)
+        knob_y = slider_y + slider_height // 2
+
+        if mouse_click[0] and pygame.Rect(slider_x, slider_y - knob_radius, slider_length, knob_radius * 2).collidepoint(mouse_pos):
+            knob_x = max(slider_x, min(mouse_pos[0], slider_x + slider_length))
+            frame_rate = int(min_rate + (knob_x - slider_x) / slider_length * (max_rate - min_rate))
+
+        pygame.draw.rect(screen, (180, 180, 180), (slider_x, slider_y, slider_length, slider_height))
+        pygame.draw.circle(screen, (0, 122, 204), (knob_x, knob_y), knob_radius)
+
+        value_text = font_small.render(str(frame_rate), True, (0, 0, 0))
+        screen.blit(value_text, (slider_x + slider_length + 15, frame_y))
+
+
+
+
+
 
         # update
 
         # draw
-        screen.fill("#77e30b")  # always the first drawing command
 
       
 
     # Must be the last two lines
     # of the game loop
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(frame_rate)
     #---------------------------
 
 
