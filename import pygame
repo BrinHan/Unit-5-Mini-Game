@@ -4,11 +4,12 @@ import pygame
 pygame.init()
 pygame.font.init()
 
-WIDTH = 640
-HEIGHT = 480
-SIZE = (WIDTH, HEIGHT)
+infoObject = pygame.display.Info()
 
-screen = pygame.display.set_mode(SIZE)
+SIZE = (900, 600)
+
+screen = pygame.display.set_mode(SIZE, pygame.RESIZABLE)
+
 clock = pygame.time.Clock()
 
 # ---------------------------
@@ -20,6 +21,7 @@ current_screen = "menu"
 
 running = True
 while running:
+    WIDTH, HEIGHT = screen.get_size()
     if current_screen == "menu":
         # EVENT HANDLING
         for event in pygame.event.get():
@@ -29,11 +31,6 @@ while running:
                 if event.key == pygame.K_i:
                     current_screen = "instructions"
 
-
-        # GAME STATE UPDATES
-        # All game math and comparisons happen here
-
-        # DRAWING
         screen.fill("#e3700b")  # always the first drawing command
 
         some_text = font_arial_50.render('Menu Screen', True, (0, 0, 0))
